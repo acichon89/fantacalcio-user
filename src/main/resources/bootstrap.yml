@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: fantacalcio-user
+  cloud:
+    config:
+      uri: http://212.237.10.70
+      fail-fast: true

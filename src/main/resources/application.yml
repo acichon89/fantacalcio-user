@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        activationMailChannel:
+          destination: user-registered-queue
+          contentType: application/json
+          durableSubscription: true
+          group: default
