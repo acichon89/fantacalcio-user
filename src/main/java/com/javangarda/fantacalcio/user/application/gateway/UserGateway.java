@@ -12,5 +12,5 @@ public interface UserGateway {
     void confirmUserEmail(String email);
 
     //query:
-    Optional<UserDTO> getByConfirmationToken(String confirmationToken);
+    Optional<UserDTO> getByConfirmationTokenAndEmail(String confirmationToken, String email);
 }

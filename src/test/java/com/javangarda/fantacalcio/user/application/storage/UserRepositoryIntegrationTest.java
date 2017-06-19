@@ -45,19 +45,6 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    public void findByConfirmEmailTokenTest(){
-        //given:
-        entityManager.persist(user);
-        //when:
-        Optional<User> userOpt = userRepository.findByConfirmEmailToken("token");
-        Optional<User> userOpt2 = userRepository.findByConfirmEmailToken("token2222222");
-        //then:
-        assertTrue(userOpt.isPresent());
-        userOpt.ifPresent(u -> assertEquals("123", u.getId()));
-        assertFalse(userOpt2.isPresent());
-    }
-
-    @Test
     public void countUserWithConfirmEmailTokenTest(){
         //given:
         entityManager.persist(user);

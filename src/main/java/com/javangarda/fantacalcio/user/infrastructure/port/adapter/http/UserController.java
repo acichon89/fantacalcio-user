@@ -27,8 +27,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/unconfirmedUser")
-    public ResponseEntity<UserDTO> getByConfirmationToken(@RequestParam("token") String confirmationToken) {
-        return ResponseEntity.ok(userGateway.getByConfirmationToken(confirmationToken)
+    public ResponseEntity<UserDTO> getByConfirmationToken(@RequestParam("token") String confirmationToken, @RequestParam("email") String email) {
+        return ResponseEntity.ok(userGateway.getByConfirmationTokenAndEmail(confirmationToken, email)
                 .orElseThrow(() -> new ResourceNotFoundException("user", null)));
     }
 }

@@ -23,15 +23,15 @@ public class TransactionalUserService implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getByConfirmationToken(String confirmationToken) {
-        return userRepository.findByConfirmEmailToken(confirmationToken).map(this::map);
-    }
-
-    @Override
     public void confirmUserEmail(String email) {
         userRepository.findByTmpEmail(email).ifPresent(user -> {
             user.confirmEmail();
         });
+    }
+
+    @Override
+    public Optional<UserDTO> getByConfirmationTokenAndEmail(String confirmationToken, String email) {
+        return userRepository.findByConfirmEmailTokenAndEmail(confirmationToken, email).map(this::map);
     }
 
     private UserDTO map(User user){

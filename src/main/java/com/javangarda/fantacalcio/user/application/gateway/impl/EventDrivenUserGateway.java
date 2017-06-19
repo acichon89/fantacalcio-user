@@ -31,9 +31,10 @@ public class EventDrivenUserGateway implements UserGateway {
     }
 
     @Override
-    public Optional<UserDTO> getByConfirmationToken(String confirmationToken) {
-        return userService.getByConfirmationToken(confirmationToken);
+    public Optional<UserDTO> getByConfirmationTokenAndEmail(String confirmationToken, String email) {
+        return userService.getByConfirmationTokenAndEmail(confirmationToken, email);
     }
+
 
     private UserRegisteredEvent create(UserDTO storedUser) {
         return UserRegisteredEvent.of(storedUser.getId(), storedUser.getFullName(),storedUser.getUnConfirmedEmail(),

@@ -56,10 +56,10 @@ public class TransactionalUserServiceTest {
         User user = new User("ccc");
         user.register("Mickey Mouse", "mickey@disney.com", "4444444", Locale.ENGLISH);
         user.confirmEmail();
-        when(userRepository.findByConfirmEmailToken("4444444")).thenReturn(Optional.of(user));
+        when(userRepository.findByConfirmEmailTokenAndEmail("4444444", "mickey@disney.com")).thenReturn(Optional.of(user));
 
         //when:
-        Optional<UserDTO> dto = transactionalUserService.getByConfirmationToken("4444444");
+        Optional<UserDTO> dto = transactionalUserService.getByConfirmationTokenAndEmail("4444444", "mickey@disney.com");
 
         //then:
         assertThat(dto).isPresent();

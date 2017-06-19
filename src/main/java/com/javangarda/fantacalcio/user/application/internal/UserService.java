@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface UserService {
     UserDTO saveUser(RegisterUserCommand registerUserCommand);
-    Optional<UserDTO> getByConfirmationToken(String confirmationToken);
     void confirmUserEmail(String email);
+
+    Optional<UserDTO> getByConfirmationTokenAndEmail(String confirmationToken, String email);
 }

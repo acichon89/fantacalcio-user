@@ -19,8 +19,8 @@ public interface UserRepository extends Repository<User, String> {
 
     User save(User u);
 
-    @Query("SELECT u FROM User u WHERE u.confirmEmailToken =:token")
-    Optional<User> findByConfirmEmailToken(@Param("token") String token);
+    @Query("SELECT u FROM User u WHERE u.confirmEmailToken =:token and u.")
+    Optional<User> findByConfirmEmailTokenAndEmail(@Param("token") String token, @Param("email") String confirmEmailToken);
 
     @Query("SELECT u FROM User u WHERE u.tmpEmail =:email")
     Optional<User> findByTmpEmail(String email);

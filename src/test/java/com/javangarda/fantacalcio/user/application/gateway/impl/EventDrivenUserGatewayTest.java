@@ -68,9 +68,10 @@ public class EventDrivenUserGatewayTest {
     public void should_return_from_service(){
         //given:
         String token = "abc";
-        when(userService.getByConfirmationToken(eq(token))).thenReturn(Optional.empty());
+        String email = "john@doe.com";
+        when(userService.getByConfirmationTokenAndEmail(eq(token), eq(email))).thenReturn(Optional.empty());
         //when:
-        Optional<UserDTO> userValue = eventDrivenUserGateway.getByConfirmationToken(token);
+        Optional<UserDTO> userValue = eventDrivenUserGateway.getByConfirmationTokenAndEmail(token, email);
         //then:
         assertThat(userValue).isEmpty();
     }
