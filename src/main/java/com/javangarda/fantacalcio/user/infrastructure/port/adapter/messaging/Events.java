@@ -11,8 +11,10 @@ public interface Events {
     @Output
     MessageChannel activationMailChannel();
 
-    String ACCOUNT_CREATED_INPUT = "accountCreatedChannel";
+    @Output
+    MessageChannel changeEmailChannel();
 
-    @Input("dsadas")
+    String ACCOUNT_CREATED_INPUT = "accountCreatedChannel";
+    @Input(ACCOUNT_CREATED_INPUT)
     SubscribableChannel confirmUserChannel();
 }

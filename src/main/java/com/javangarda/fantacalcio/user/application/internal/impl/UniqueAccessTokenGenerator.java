@@ -1,7 +1,7 @@
 package com.javangarda.fantacalcio.user.application.internal.impl;
 
 import com.javangarda.fantacalcio.user.application.internal.AccessTokenGenerator;
-import com.javangarda.fantacalcio.user.application.storage.UserRepository;
+import com.javangarda.fantacalcio.user.application.internal.storage.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 

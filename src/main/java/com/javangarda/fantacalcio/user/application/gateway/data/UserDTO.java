@@ -1,4 +1,4 @@
-package com.javangarda.fantacalcio.user.application.data.dto;
+package com.javangarda.fantacalcio.user.application.gateway.data;
 
 import lombok.Data;
 

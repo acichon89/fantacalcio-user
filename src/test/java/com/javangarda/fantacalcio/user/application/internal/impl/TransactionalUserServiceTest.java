@@ -1,10 +1,10 @@
 package com.javangarda.fantacalcio.user.application.internal.impl;
 
-import com.javangarda.fantacalcio.user.application.data.command.RegisterUserCommand;
-import com.javangarda.fantacalcio.user.application.data.dto.UserDTO;
+import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
+import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
 import com.javangarda.fantacalcio.user.application.internal.UserFactory;
-import com.javangarda.fantacalcio.user.application.storage.User;
-import com.javangarda.fantacalcio.user.application.storage.UserRepository;
+import com.javangarda.fantacalcio.user.application.internal.storage.User;
+import com.javangarda.fantacalcio.user.application.internal.storage.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

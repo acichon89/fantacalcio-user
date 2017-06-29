@@ -1,4 +1,4 @@
-package com.javangarda.fantacalcio.user.application.storage;
+package com.javangarda.fantacalcio.user.application.internal.storage;
 
 import com.javangarda.fantacalcio.commons.entities.VersionedDefaultEntity;
 import lombok.Getter;
@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.ws.rs.GET;
 import java.util.Locale;
 
 @Entity
@@ -36,15 +35,19 @@ public class User extends VersionedDefaultEntity <String> {
 
     public void register(String fullName, String email, String confirmationToken, Locale emailLocale){
         this.fullName=fullName;
-        this.tmpEmail=email;
-        this.confirmEmailToken=confirmationToken;
         this.emailLocale=emailLocale;
+        assignEmailToBeConfirmed(email, confirmationToken);
     }
 
     public void confirmEmail() {
         this.email=this.tmpEmail;
         this.tmpEmail=null;
         this.confirmEmailToken=null;
+    }
+
+    public void assignEmailToBeConfirmed(String email, String confirmEmailToken){
+        this.tmpEmail=email;
+        this.confirmEmailToken=confirmEmailToken;
     }
 
     public boolean hasConfirmationEmailToken(String token){

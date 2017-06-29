@@ -1,4 +1,4 @@
-package com.javangarda.fantacalcio.user.application.data.command;
+package com.javangarda.fantacalcio.user.application.gateway.command;
 
 import com.javangarda.fantacalcio.commons.validation.RepositoryFieldUnique;
 import lombok.Value;

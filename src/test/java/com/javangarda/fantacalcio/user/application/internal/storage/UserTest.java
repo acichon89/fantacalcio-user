@@ -1,4 +1,4 @@
-package com.javangarda.fantacalcio.user.application.storage;
+package com.javangarda.fantacalcio.user.application.internal.storage;
 
 import org.junit.Test;
 

@@ -1,8 +1,8 @@
 package com.javangarda.fantacalcio.user.application.internal.impl;
 
-import com.javangarda.fantacalcio.user.application.data.command.RegisterUserCommand;
+import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
 import com.javangarda.fantacalcio.user.application.internal.AccessTokenGenerator;
-import com.javangarda.fantacalcio.user.application.storage.User;
+import com.javangarda.fantacalcio.user.application.internal.storage.User;
 import org.junit.Before;
 import org.junit.Test;
 

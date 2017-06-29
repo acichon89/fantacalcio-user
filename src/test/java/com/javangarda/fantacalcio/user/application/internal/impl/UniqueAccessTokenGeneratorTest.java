@@ -1,6 +1,6 @@
 package com.javangarda.fantacalcio.user.application.internal.impl;
 
-import com.javangarda.fantacalcio.user.application.storage.UserRepository;
+import com.javangarda.fantacalcio.user.application.internal.storage.UserRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

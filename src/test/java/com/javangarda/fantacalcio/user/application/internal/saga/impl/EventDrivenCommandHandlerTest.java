@@ -1,33 +1,36 @@
-package com.javangarda.fantacalcio.user.application.gateway.impl;
+package com.javangarda.fantacalcio.user.application.internal.saga.impl;
 
-import com.javangarda.fantacalcio.user.application.data.command.RegisterUserCommand;
-import com.javangarda.fantacalcio.user.application.data.dto.UserDTO;
-import com.javangarda.fantacalcio.user.application.data.event.UserRegisteredEvent;
+import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
+import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
 import com.javangarda.fantacalcio.user.application.internal.UserService;
-import com.javangarda.fantacalcio.user.application.saga.UserEventPublisher;
+import com.javangarda.fantacalcio.user.application.internal.saga.UserEventPublisher;
+import com.javangarda.fantacalcio.user.application.internal.saga.UserRegisteredEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Locale;
-import java.util.Optional;
 
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class EventDrivenUserGatewayTest {
+
+public class EventDrivenCommandHandlerTest {
 
     private UserService userService;
     private UserEventPublisher userEventPublisher;
 
-    private EventDrivenUserGateway eventDrivenUserGateway;
+    private EventDrivenCommandHandler eventDrivenCommandHandler;
 
     @Before
     public void init(){
         userService = mock(UserService.class);
         userEventPublisher = mock(UserEventPublisher.class);
 
-        eventDrivenUserGateway = new EventDrivenUserGateway(userService, userEventPublisher);
+        eventDrivenCommandHandler = new EventDrivenCommandHandler(userService, userEventPublisher);
     }
 
     @Test
@@ -42,7 +45,7 @@ public class EventDrivenUserGatewayTest {
         userDTO.setConfirmationToken("abbba");
         when(userService.saveUser(eq(registerUserCommand))).thenReturn(userDTO);
         //when:
-        eventDrivenUserGateway.registerUser(registerUserCommand);
+        eventDrivenCommandHandler.handle(registerUserCommand);
         //then:
         verify(userService).saveUser(registerUserCommand);
         ArgumentCaptor<UserRegisteredEvent> argumentCaptorUserEvent = ArgumentCaptor.forClass(UserRegisteredEvent.class);
@@ -52,27 +55,5 @@ public class EventDrivenUserGatewayTest {
         assertThat(userRegisteredEvent.getConfirmationToken()).isEqualTo("abbba");
         assertThat(userRegisteredEvent.getEmailLocale()).isEqualTo(Locale.ENGLISH);
         assertThat(userRegisteredEvent.getFullName()).isEqualTo("John Doe");
-    }
-
-    @Test
-    public void should_delegate_to_service_while_confirming(){
-        //given:
-        String email = "john@doe.com";
-        //when:
-        eventDrivenUserGateway.confirmUserEmail(email);
-        //then:
-        verify(userService).confirmUserEmail(email);
-    }
-
-    @Test
-    public void should_return_from_service(){
-        //given:
-        String token = "abc";
-        String email = "john@doe.com";
-        when(userService.getByConfirmationTokenAndEmail(eq(token), eq(email))).thenReturn(Optional.empty());
-        //when:
-        Optional<UserDTO> userValue = eventDrivenUserGateway.getByConfirmationTokenAndEmail(token, email);
-        //then:
-        assertThat(userValue).isEmpty();
     }
 }
