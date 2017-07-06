@@ -12,6 +12,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 
 version = '0.0.1-SNAPSHOT'
@@ -67,3 +68,13 @@ bootRun {
 springBoot {
 	executable = true
 }
+
+jacocoTestReport(){
+	group = "Reporting"
+	description = "Generate Jacoco coverage reports after running tests."
+	reports {
+		xml.enabled = true // coveralls plugin depends on xml format report
+		html.enabled = true
+	}
+}
+build.dependsOn(jacocoTestReport)
