@@ -9,5 +9,6 @@ public interface UserService {
     UserDTO saveUser(RegisterUserCommand registerUserCommand);
     void confirmUserEmail(String email);
     UserDTO storeTmpEmail(ChangeEmailCommand changeEmailCommand);
+    UserDTO assignResetPasswordToken(String email);
 
 }

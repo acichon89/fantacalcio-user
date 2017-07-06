@@ -39,5 +39,12 @@ public class TransactionalUserService implements UserService {
         return userDTOMapper.map(u);
     }
 
+    @Override
+    public UserDTO assignResetPasswordToken(String email) {
+        User user = userRepository.findByEmail(email).get();
+        user.setResetPasswordToken(accessTokenGenerator.createResetPasswordToken());
+        return userDTOMapper.map(user);
+    }
+
 
 }

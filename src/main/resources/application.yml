@@ -7,3 +7,18 @@ spring:
           contentType: application/json
           durableSubscription: true
           group: default
+        userResetPasswordChannel:
+          destination: user-forgot-password-queue
+          contentType: application/json
+          durableSubscription: true
+          group: default
+        changeEmailChannel:
+          destination: user-attempted-to-change-email-queue
+          contentType: application/json
+          durableSubscription: true
+          group: default
+        accountCreatedChannel:
+          durableSubscription: true
+          group: default
+          destination: account-created-queue
+          content-type: application/x-java-object;type=com.javangarda.fantacalcio.user.application.gateway.command.ConfirmEmailCommand

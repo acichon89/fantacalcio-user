@@ -39,7 +39,6 @@ import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableEurekaClient
-@RestController
 @EnableBinding(Events.class)
 @EnableIntegration
 @IntegrationComponentScan(basePackages={"com.javangarda.fantacalcio.user"})
@@ -102,6 +101,12 @@ public class FantacalcioUserApplication implements AsyncConfigurer{
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
 		return new SimpleAsyncUncaughtExceptionHandler();
 	}
+
+	@Bean
+	public MessageChannel resetPasswordCommandChannel(){
+		return new PublishSubscribeChannel(getAsyncExecutor());
+	}
+
 
 	@Bean
 	public MessageChannel registerCommandChannel(){

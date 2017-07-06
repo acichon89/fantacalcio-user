@@ -14,6 +14,9 @@ public interface Events {
     @Output
     MessageChannel changeEmailChannel();
 
+    @Output
+    MessageChannel userResetPasswordChannel();
+
     String ACCOUNT_CREATED_INPUT = "accountCreatedChannel";
     @Input(ACCOUNT_CREATED_INPUT)
     SubscribableChannel confirmUserChannel();

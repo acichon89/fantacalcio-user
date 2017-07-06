@@ -1,4 +1,4 @@
-package com.javangarda.fantacalcio.user.infrastructure.port.adapter.http;
+package com.javangarda.fantacalcio.user.infrastructure.port.adapter.http.api;
 
 import com.javangarda.fantacalcio.commons.http.BadRequestResponseDTO;
 import com.javangarda.fantacalcio.commons.http.ResponseDTO;

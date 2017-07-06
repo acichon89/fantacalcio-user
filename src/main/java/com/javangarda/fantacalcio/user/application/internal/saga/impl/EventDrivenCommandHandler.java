@@ -1,14 +1,13 @@
 package com.javangarda.fantacalcio.user.application.internal.saga.impl;
 
 
+import com.javangarda.fantacalcio.user.application.gateway.command.ConfirmEmailCommand;
+import com.javangarda.fantacalcio.user.application.gateway.command.ResetPasswordCommand;
 import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
-import com.javangarda.fantacalcio.user.application.internal.saga.UserAttemptedToChangeEmailEvent;
-import com.javangarda.fantacalcio.user.application.internal.saga.UserRegisteredEvent;
+import com.javangarda.fantacalcio.user.application.internal.saga.*;
 import com.javangarda.fantacalcio.user.application.gateway.command.ChangeEmailCommand;
 import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
 import com.javangarda.fantacalcio.user.application.internal.UserService;
-import com.javangarda.fantacalcio.user.application.internal.saga.CommandHandler;
-import com.javangarda.fantacalcio.user.application.internal.saga.UserEventPublisher;
 import lombok.AllArgsConstructor;
 import org.springframework.integration.annotation.ServiceActivator;
 
@@ -35,5 +34,18 @@ public class EventDrivenCommandHandler implements CommandHandler {
         UserRegisteredEvent event = UserRegisteredEvent.of(storedUser.getId(), storedUser.getFullName(),storedUser.getUnConfirmedEmail(),
                 storedUser.getConfirmationToken(), storedUser.getEmailLocale());
         userEventPublisher.publishUserRegistered(event);
+    }
+
+    @Override
+    @ServiceActivator(inputChannel = "confirmUserCommandChannel")
+    public void handle(ConfirmEmailCommand command) {
+        userService.confirmUserEmail(command.getEmail());
+    }
+
+    @Override
+    public void handle(ResetPasswordCommand command) {
+        UserDTO userDTO = userService.assignResetPasswordToken(command.getEmail());
+        UserForgotPasswordEvent event = UserForgotPasswordEvent.of(userDTO.getFullName(), userDTO.getConfirmedEmail(), userDTO.getResetPasswordToken(), userDTO.getEmailLocale());
+        userEventPublisher.publishUserForgotPassword(event);
     }
 }

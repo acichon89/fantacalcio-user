@@ -22,6 +22,7 @@ public class User extends VersionedDefaultEntity <String> {
     @Getter
     @Column(name="confirm_email_token")
     private String confirmEmailToken;
+    @Getter
     @Setter
     private String resetPasswordToken;
     @Getter

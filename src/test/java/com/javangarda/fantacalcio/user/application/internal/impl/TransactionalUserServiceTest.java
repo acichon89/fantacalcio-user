@@ -1,7 +1,10 @@
 package com.javangarda.fantacalcio.user.application.internal.impl;
 
+import com.javangarda.fantacalcio.user.application.gateway.command.ChangeEmailCommand;
 import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
 import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
+import com.javangarda.fantacalcio.user.application.internal.AccessTokenGenerator;
+import com.javangarda.fantacalcio.user.application.internal.UserDTOMapper;
 import com.javangarda.fantacalcio.user.application.internal.UserFactory;
 import com.javangarda.fantacalcio.user.application.internal.storage.User;
 import com.javangarda.fantacalcio.user.application.internal.storage.UserRepository;
@@ -20,6 +23,8 @@ public class TransactionalUserServiceTest {
 
     private UserFactory userFactory;
     private UserRepository userRepository;
+    private AccessTokenGenerator accessTokenGenerator;
+    private UserDTOMapper userDTOMapper;
 
     private TransactionalUserService transactionalUserService;
 
@@ -27,7 +32,9 @@ public class TransactionalUserServiceTest {
     public void init(){
         userFactory = mock(UserFactory.class);
         userRepository = mock(UserRepository.class);
-        transactionalUserService = new TransactionalUserService(userFactory, userRepository);
+        accessTokenGenerator = mock(AccessTokenGenerator.class);
+        userDTOMapper = new SimpleUserDTOMapper();
+        transactionalUserService = new TransactionalUserService(userFactory, userRepository, accessTokenGenerator, userDTOMapper);
     }
 
     @Test
@@ -51,19 +58,32 @@ public class TransactionalUserServiceTest {
     }
 
     @Test
-    public void should_return_persisted_mapped_user() {
+    public void should_assing_email_while_confirm() {
         //given:
-        User user = new User("ccc");
-        user.register("Mickey Mouse", "mickey@disney.com", "4444444", Locale.ENGLISH);
-        user.confirmEmail();
-        when(userRepository.findByConfirmEmailTokenAndEmail("4444444", "mickey@disney.com")).thenReturn(Optional.of(user));
-
+        User user = new User("123");
+        user.register("Johnny Bravo", "johnny@bravo.com", "rrr", Locale.ENGLISH);
+        when(userRepository.findByTmpEmail("johnny@bravo.com")).thenReturn(Optional.of(user));
         //when:
-        Optional<UserDTO> dto = transactionalUserService.getByConfirmationTokenAndEmail("4444444", "mickey@disney.com");
-
+        transactionalUserService.confirmUserEmail("johnny@bravo.com");
         //then:
-        assertThat(dto).isPresent();
-        assertThat(dto.get().getFullName()).isEqualTo("Mickey Mouse");
-        assertThat(dto.get().getConfirmedEmail()).isEqualTo("mickey@disney.com");
+        verify(userRepository).findByTmpEmail("johnny@bravo.com");
+        assertThat(user.getEmail()).isEqualTo("johnny@bravo.com");
+    }
+
+    @Test
+    public void should_store_tmp_email() {
+        //given:
+        User user = new User("123");
+        user.register("Johnny Bravo", "johnny@bravo.com", "rrr", Locale.ENGLISH);
+        user.confirmEmail();
+        when(userRepository.findByEmail("johnny@bravo.com")).thenReturn(Optional.of(user));
+        when(accessTokenGenerator.createConfirmEmailToken()).thenReturn("abb-aa");
+        //when:
+        transactionalUserService.storeTmpEmail(ChangeEmailCommand.of("johnny@bravo.com", "johndoe@example.com"));
+        //then:
+        verify(userRepository).findByEmail("johnny@bravo.com");
+        assertThat(user.getEmail()).isEqualTo("johnny@bravo.com");
+        assertThat(user.getTmpEmail()).isEqualTo("johndoe@example.com");
+        assertThat(user.getConfirmEmailToken()).isEqualTo("abb-aa");
     }
 }

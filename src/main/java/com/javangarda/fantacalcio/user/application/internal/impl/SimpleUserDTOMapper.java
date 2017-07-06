@@ -15,6 +15,7 @@ public class SimpleUserDTOMapper implements UserDTOMapper {
         dto.setConfirmedEmail(user.getEmail());
         dto.setUnConfirmedEmail(user.getTmpEmail());
         dto.setEmailLocale(user.getEmailLocale());
+        dto.setResetPasswordToken(user.getResetPasswordToken());
         return dto;
     }
 }
