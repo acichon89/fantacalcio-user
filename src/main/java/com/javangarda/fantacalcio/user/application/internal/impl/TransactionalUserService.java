@@ -27,9 +27,7 @@ public class TransactionalUserService implements UserService {
 
     @Override
     public void confirmUserEmail(String email) {
-        userRepository.findByTmpEmail(email).ifPresent(user -> {
-            user.confirmEmail();
-        });
+        userRepository.findByTmpEmail(email).ifPresent(user -> user.confirmEmail());
     }
 
     @Override
