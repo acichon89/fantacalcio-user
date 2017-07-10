@@ -5,7 +5,6 @@ import com.javangarda.fantacalcio.user.application.gateway.command.ConfirmEmailC
 import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
 import com.javangarda.fantacalcio.user.application.gateway.command.ResetPasswordCommand;
 import org.springframework.integration.annotation.Gateway;
-import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.MessagingGateway;
 
 @MessagingGateway
