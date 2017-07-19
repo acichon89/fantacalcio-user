@@ -37,12 +37,13 @@ dependencies {
 	compile('org.springframework.cloud:spring-cloud-starter-hystrix')
 	compile('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.7.Final'
+	compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.2.7.Final'
 	compile('org.flywaydb:flyway-core')
 	compile('org.springframework.boot:spring-boot-starter-integration')
-	//compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-validation')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('com.javangarda.fantacalcio:fantacalcio-commons:1.0.0') {
+	compile('com.javangarda.fantacalcio:fantacalcio-commons:1.0.4') {
 		exclude	group : 'javax.validation'
 		exclude group : 'javax.persistence'
 		exclude group : 'org.springframework'

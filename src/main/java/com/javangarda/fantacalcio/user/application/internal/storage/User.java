@@ -15,8 +15,10 @@ public class User extends VersionedDefaultEntity <String> {
 
     @Getter
     private String email;
+    @Column(name = "tmp_email")
     @Getter
     private String tmpEmail;
+    @Column(name = "full_name")
     @Getter @Setter
     private String fullName;
     @Getter
@@ -24,7 +26,9 @@ public class User extends VersionedDefaultEntity <String> {
     private String confirmEmailToken;
     @Getter
     @Setter
+    @Column(name = "reset_password_token")
     private String resetPasswordToken;
+    @Column(name = "email_locale")
     @Getter
     private Locale emailLocale;
 

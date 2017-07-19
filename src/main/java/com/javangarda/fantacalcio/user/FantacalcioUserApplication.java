@@ -26,6 +26,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.config.EnableIntegration;
@@ -34,6 +37,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
@@ -42,12 +46,22 @@ import java.util.concurrent.Executor;
 @EnableBinding(Events.class)
 @EnableIntegration
 @IntegrationComponentScan(basePackages={"com.javangarda.fantacalcio.user"})
+@EnableJpaAuditing(auditorAwareRef = "auditorInstantAware")
 public class FantacalcioUserApplication implements AsyncConfigurer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(FantacalcioUserApplication.class, args);
 	}
 
+	@Bean
+	public AuditingEntityListener createAuditingListener() {
+		return new AuditingEntityListener();
+	}
+
+	@Bean
+	public AuditorAware<Instant> auditorInstantAware() {
+		return () -> Instant.now();
+	}
 
 	@Bean
 	UserEventPublisher userEventPublisher(Events events) {

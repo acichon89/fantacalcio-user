@@ -1,4 +1,9 @@
 spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
   cloud:
     stream:
       bindings:

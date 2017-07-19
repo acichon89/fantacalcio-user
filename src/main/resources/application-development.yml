@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost/fantacalcio_user
+    url: jdbc:mysql://localhost/fantacalcio_user?useLegacyDatetimeCode=false&serverTimezone=Etc/UTC
     username: fantacalcio_db_user
     password: fantacalciodbpass1
     driverClassName: com.mysql.jdbc.Driver
