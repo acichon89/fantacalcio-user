@@ -3,7 +3,6 @@ package com.javangarda.fantacalcio.user.application.gateway.command;
 import lombok.Value;
 
 @Value(staticConstructor = "of")
-public class ConfirmEmailCommand {
+public class StartResettingPasswordProcedureCommand {
     private String email;
-    private String confirmationToken;
 }

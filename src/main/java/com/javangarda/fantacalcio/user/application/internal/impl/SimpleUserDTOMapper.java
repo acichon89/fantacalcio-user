@@ -3,7 +3,7 @@ package com.javangarda.fantacalcio.user.application.internal.impl;
 
 import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
 import com.javangarda.fantacalcio.user.application.internal.UserDTOMapper;
-import com.javangarda.fantacalcio.user.application.internal.storage.User;
+import com.javangarda.fantacalcio.user.application.internal.storage.model.User;
 
 public class SimpleUserDTOMapper implements UserDTOMapper {
     @Override

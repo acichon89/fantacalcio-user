@@ -1,0 +1,35 @@
+package com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging;
+
+import com.javangarda.fantacalcio.user.application.internal.saga.UserAttemptedToChangeEmailEvent;
+import com.javangarda.fantacalcio.user.application.internal.saga.UserForgotPasswordEvent;
+import com.javangarda.fantacalcio.user.application.internal.saga.UserRegisteredEvent;
+import com.javangarda.fantacalcio.user.application.internal.saga.UserEventPublisher;
+import com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.Events;
+import lombok.AllArgsConstructor;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
+
+@AllArgsConstructor
+public class ExternalMessagingUserEventPublisher implements UserEventPublisher {
+
+    private Events events;
+
+    @Override
+    public void publishUserRegistered(UserRegisteredEvent event) {
+        Message<UserRegisteredEvent> message = MessageBuilder.withPayload(event).build();
+        events.activationMailChannel().send(message);
+    }
+
+    @Override
+    public void publishUserAttemptedToChangeEmail(UserAttemptedToChangeEmailEvent event) {
+        Message<UserAttemptedToChangeEmailEvent> message = MessageBuilder.withPayload(event).build();
+        events.changeEmailChannel().send(message);
+    }
+
+    @Override
+    public void publishUserForgotPassword(UserForgotPasswordEvent event) {
+        Message<UserForgotPasswordEvent> message = MessageBuilder.withPayload(event).build();
+        events.userResetPasswordChannel().send(message);
+    }
+
+}

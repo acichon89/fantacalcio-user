@@ -3,7 +3,7 @@ package com.javangarda.fantacalcio.user.application.internal.impl;
 import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
 import com.javangarda.fantacalcio.user.application.internal.AccessTokenGenerator;
 import com.javangarda.fantacalcio.user.application.internal.UserFactory;
-import com.javangarda.fantacalcio.user.application.internal.storage.User;
+import com.javangarda.fantacalcio.user.application.internal.storage.model.User;
 import lombok.AllArgsConstructor;
 
 import java.util.Locale;

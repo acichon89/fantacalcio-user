@@ -1,12 +1,14 @@
 package com.javangarda.fantacalcio.user;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.javangarda.fantacalcio.commons.authentication.CurrentUserResolver;
+import com.javangarda.fantacalcio.commons.authentication.impl.SecurityContextCurrentUserResolver;
+import com.javangarda.fantacalcio.user.application.gateway.CommandBus;
 import com.javangarda.fantacalcio.user.application.gateway.QueryFacade;
-import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
 import com.javangarda.fantacalcio.user.application.gateway.impl.SimpleQueryFacade;
-import com.javangarda.fantacalcio.user.application.internal.AccessTokenGenerator;
-import com.javangarda.fantacalcio.user.application.internal.UserDTOMapper;
-import com.javangarda.fantacalcio.user.application.internal.UserFactory;
-import com.javangarda.fantacalcio.user.application.internal.UserService;
+import com.javangarda.fantacalcio.user.application.internal.*;
 import com.javangarda.fantacalcio.user.application.internal.impl.SimpleUserDTOMapper;
 import com.javangarda.fantacalcio.user.application.internal.impl.SimpleUserFactory;
 import com.javangarda.fantacalcio.user.application.internal.impl.TransactionalUserService;
@@ -15,15 +17,26 @@ import com.javangarda.fantacalcio.user.application.internal.saga.CommandHandler;
 import com.javangarda.fantacalcio.user.application.internal.saga.UserEventPublisher;
 import com.javangarda.fantacalcio.user.application.internal.saga.impl.EventDrivenCommandHandler;
 import com.javangarda.fantacalcio.user.application.internal.storage.UserRepository;
-import com.javangarda.fantacalcio.user.infrastructure.port.adapter.messaging.Events;
-import com.javangarda.fantacalcio.user.infrastructure.port.adapter.messaging.ExternalMessagingUserEventPublisher;
+import com.javangarda.fantacalcio.user.application.internal.storage.dataprojection.DataProjectionRepository;
+import com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.Events;
+import com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.ExternalMessagingAccountEventHandler;
+import com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.ExternalMessagingUserEventPublisher;
+import com.javangarda.fantacalcio.user.infrastructure.adapter.outcome.persistence.JdbcDataProjectionRepository;
+import feign.RequestInterceptor;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.cloud.security.oauth2.client.feign.OAuth2FeignRequestInterceptor;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.AuditorAware;
@@ -32,12 +45,20 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
@@ -47,6 +68,7 @@ import java.util.concurrent.Executor;
 @EnableIntegration
 @IntegrationComponentScan(basePackages={"com.javangarda.fantacalcio.user"})
 @EnableJpaAuditing(auditorAwareRef = "auditorInstantAware")
+@EnableConfigurationProperties
 public class FantacalcioUserApplication implements AsyncConfigurer{
 
 	public static void main(String[] args) {
@@ -54,13 +76,18 @@ public class FantacalcioUserApplication implements AsyncConfigurer{
 	}
 
 	@Bean
-	public AuditingEntityListener createAuditingListener() {
-		return new AuditingEntityListener();
+	public AuditorAware<LocalDateTime> auditorInstantAware() {
+		return () -> LocalDateTime.now();
 	}
 
 	@Bean
-	public AuditorAware<Instant> auditorInstantAware() {
-		return () -> Instant.now();
+	public CurrentUserResolver currentUserResolver() {
+		return new SecurityContextCurrentUserResolver();
+	}
+
+	@Bean
+	public ExternalMessagingAccountEventHandler externalMessagingAccountEventHandler(CommandBus commandBus) {
+		return new ExternalMessagingAccountEventHandler(commandBus);
 	}
 
 	@Bean
@@ -71,6 +98,12 @@ public class FantacalcioUserApplication implements AsyncConfigurer{
 	@Bean
 	AccessTokenGenerator accessTokenGenerator(UserRepository userRepository) {
 		return new UniqueAccessTokenGenerator(userRepository);
+	}
+
+	@Bean
+	@LoadBalanced
+	RestTemplate restTemplate(){
+		return new RestTemplate();
 	}
 
 	@Bean
@@ -87,8 +120,8 @@ public class FantacalcioUserApplication implements AsyncConfigurer{
 	}
 
 	@Bean
-	QueryFacade queryFacade(UserRepository userRepository, UserDTOMapper userDTOMapper) {
-		return new SimpleQueryFacade(userRepository, userDTOMapper);
+	QueryFacade queryFacade(DataProjectionRepository dataProjectionRepository) {
+		return new SimpleQueryFacade(dataProjectionRepository);
 	}
 
 	@Bean
@@ -117,7 +150,7 @@ public class FantacalcioUserApplication implements AsyncConfigurer{
 	}
 
 	@Bean
-	public MessageChannel resetPasswordCommandChannel(){
+	public MessageChannel startResettingPasswordProcedureCommandChannel(){
 		return new PublishSubscribeChannel(getAsyncExecutor());
 	}
 
@@ -133,8 +166,36 @@ public class FantacalcioUserApplication implements AsyncConfigurer{
 	}
 
 	@Bean
-	public MessageChannel changeEmailCommandChannel(){
+	public MessageChannel confirmEmailCommandChannel(){
 		return new PublishSubscribeChannel(getAsyncExecutor());
+	}
+
+	@Bean
+	public MessageChannel startChangingEmailProcedureCommandChannel(){
+		return new PublishSubscribeChannel(getAsyncExecutor());
+	}
+
+	@Bean
+	public MessageChannel resetPasswordCommandChannel(){
+		return new PublishSubscribeChannel(getAsyncExecutor());
+	}
+
+	@Bean
+	public MessageChannel changePasswordCommandChannel(){
+		return new PublishSubscribeChannel(getAsyncExecutor());
+	}
+
+	@Bean
+	public DataProjectionRepository dataProjectionRepository(JdbcTemplate jdbcTemplate) {
+		return new JdbcDataProjectionRepository(jdbcTemplate);
+	}
+
+	@Bean
+	public ObjectMapper objectMapper(){
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new Jdk8Module());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		return objectMapper;
 	}
 
 }

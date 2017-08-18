@@ -1,9 +1,6 @@
 package com.javangarda.fantacalcio.user.application.gateway;
 
-import com.javangarda.fantacalcio.user.application.gateway.command.ChangeEmailCommand;
-import com.javangarda.fantacalcio.user.application.gateway.command.ConfirmEmailCommand;
-import com.javangarda.fantacalcio.user.application.gateway.command.RegisterUserCommand;
-import com.javangarda.fantacalcio.user.application.gateway.command.ResetPasswordCommand;
+import com.javangarda.fantacalcio.user.application.gateway.command.*;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
@@ -11,10 +8,12 @@ import org.springframework.integration.annotation.MessagingGateway;
 public interface CommandBus {
     @Gateway(requestChannel = "registerCommandChannel")
     void registerUser(RegisterUserCommand registerUserCommand);
-    @Gateway(requestChannel = "confirmUserCommandChannel")
-    void confirmUserEmail(ConfirmEmailCommand confirmEmailCommand);
-    @Gateway(requestChannel = "changeEmailCommandChannel")
-    void startChangingEmailProcedure(ChangeEmailCommand changeEmailCommand);
+    @Gateway(requestChannel = "confirmEmailCommandChannel")
+    void confirmEmail(ConfirmEmailCommand confirmEmailCommand);
+    @Gateway(requestChannel = "startChangingEmailProcedureCommandChannel")
+    void startChangingEmailProcedure(StartChangingEmailProcedureCommand startChangingEmailProcedureCommand);
+    @Gateway(requestChannel = "startResettingPasswordProcedureCommandChannel")
+    void startResetPasswordProcedure(StartResettingPasswordProcedureCommand startResettingPasswordProcedureCommand);
     @Gateway(requestChannel = "resetPasswordCommandChannel")
-    void startResetPasswordProcedure(ResetPasswordCommand resetPasswordCommand);
+    void resetPassword(ResetPasswordCommand resetPasswordCommand);
 }

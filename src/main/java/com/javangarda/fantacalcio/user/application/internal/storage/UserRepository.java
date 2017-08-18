@@ -1,5 +1,6 @@
 package com.javangarda.fantacalcio.user.application.internal.storage;
 
+import com.javangarda.fantacalcio.user.application.internal.storage.model.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -18,12 +19,12 @@ public interface UserRepository extends Repository<User, String> {
 
     User save(User u);
 
-    @Query("SELECT u FROM User u WHERE u.confirmEmailToken =:token and u.email=:email")
-    Optional<User> findByConfirmEmailTokenAndEmail(@Param("token") String token, @Param("email") String confirmEmailToken);
+    @Query("SELECT u FROM User u WHERE u.confirmEmailToken =:token and u.tmpEmail=:email")
+    Optional<User> findByTmpEmailAndToken(@Param("token") String token, @Param("email") String email);
 
     @Query("SELECT u FROM User u WHERE u.tmpEmail =:email")
-    Optional<User> findByTmpEmail(String email);
+    Optional<User> findByTmpEmail(@Param("email") String email);
 
     @Query("SELECT u FROM User u WHERE u.email =:email")
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(@Param("email") String email);
 }

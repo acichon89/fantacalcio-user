@@ -7,7 +7,6 @@ import java.util.Locale;
 
 @Value(staticConstructor = "of")
 public class UserRegisteredEvent {
-    private String id;
     private String fullName;
     private String email;
     private String confirmationToken;

@@ -3,7 +3,8 @@ package com.javangarda.fantacalcio.user.application.gateway.command;
 import lombok.Value;
 
 @Value(staticConstructor = "of")
-public class ConfirmEmailCommand {
-    private String email;
-    private String confirmationToken;
+public class StartChangingEmailProcedureCommand {
+
+    private String oldEmail;
+    private String newEmail;
 }

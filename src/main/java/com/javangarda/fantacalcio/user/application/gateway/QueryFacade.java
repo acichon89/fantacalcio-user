@@ -1,9 +1,10 @@
 package com.javangarda.fantacalcio.user.application.gateway;
 
-import com.javangarda.fantacalcio.user.application.gateway.data.UserDTO;
+import com.javangarda.fantacalcio.user.application.internal.storage.dataprojection.UserVerificationDataProjection;
 
 import java.util.Optional;
 
 public interface QueryFacade {
-    Optional<UserDTO> getByConfirmationTokenAndEmail(String confirmationToken, String email);
+    Optional<UserVerificationDataProjection> findByTmpEmailAndVerificationEmailToken(String tmpEmail, String verificationEmailToken);
+    Optional<UserVerificationDataProjection> findByEmailAndResetPasswordToken(String email, String resetPasswordToken);
 }

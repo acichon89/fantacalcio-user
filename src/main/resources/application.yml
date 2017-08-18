@@ -26,4 +26,27 @@ spring:
           durableSubscription: true
           group: default
           destination: account-created-queue
-          content-type: application/x-java-object;type=com.javangarda.fantacalcio.user.application.gateway.command.ConfirmEmailCommand
+          content-type: application/x-java-object;type=com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.events.AccountCreatedEvent
+        accountPasswordChangedChannel:
+          durableSubscription: true
+          group: default
+          destination: account-password-changed-queue
+          content-type: application/x-java-object;type=com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.events.AccountPasswordChangedEvent
+        accountEmailChangedChannel:
+          durableSubscription: true
+          group: default
+          destination: account-email-changed-queue
+          content-type: application/x-java-object;type=com.javangarda.fantacalcio.user.infrastructure.adapter.income.messaging.events.AccountEmailChangedEvent
+security:
+  oauth2:
+    client:
+      accessTokenUri: http://fantacalcio-auth-server/oauth/token
+      grant-type: client_credentials
+      scope: server
+    resource:
+      user-info-uri: http://fantacalcio-auth-server/current
+logging:
+  level:
+    com:
+      javangarda:
+        fantacalcio: DEBUG
